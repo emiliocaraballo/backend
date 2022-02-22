@@ -1,5 +1,5 @@
 dist/
-error/
+errors/*
 
 uploads/*
 !uploads/read.txt
@@ -7,6 +7,9 @@ uploads/*
 
 public/*
 !public/favicon.ico
+!public/README.md
+!errors/README.md
+!uploads/README.md
 
 ############################
 # OS X
