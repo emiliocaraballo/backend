@@ -3,7 +3,7 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import multer from 'multer';
-import {createConnection} from 'typeorm'
+import {createConnection} from 'typeorm';
 
 var fs = require('fs');
 var upload = multer();
@@ -46,7 +46,7 @@ app.use(cors(options));
 // que se elimine cada 3 meses lo archivo. y errores por dia.
 // log all requests to access.log
 app.use(morgan('common', {
-  stream: fs.createWriteStream(path.join(__dirname, '../error/access.log'), { flags: 'a' })
+  stream: fs.createWriteStream(path.join(__dirname, '../errors/access.log'), { flags: 'a' })
 }))
 
 // for parsing application/json

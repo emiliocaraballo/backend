@@ -1,6 +1,6 @@
 dist/
 errors/*
-
+docker-compose.yml
 uploads/*
 !uploads/read.txt
 
@@ -10,6 +10,7 @@ public/*
 !public/README.md
 !errors/README.md
 !uploads/README.md
+!docker-compose-examen.yml
 
 ############################
 # OS X
