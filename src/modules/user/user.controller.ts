@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { validateForm,extra } from 'kernell-smartinfo'
-import { IUser } from "./user.inferface";
-import { userRepository} from 'src/module/user/user.repository';
+import { IUser } from "src/modules/user/user.inferface";
+import { userRepository} from 'src/modules/user/user.repository';
 
 class UserController {
 

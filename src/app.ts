@@ -2,7 +2,6 @@ import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import swaggerUi from 'swagger-ui-express';
 import multer from 'multer';
 import {createConnection} from 'typeorm'
 
@@ -31,10 +30,9 @@ const options: cors.CorsOptions = {
     ],
     credentials: true,
     methods: 'GET,PUT,POST,DELETE',
-    origin:'*',
-    // origin: ['http://localhost:3000','http://localhost:3002','http://192.168.0.5:3002'],
-    optionsSuccessStatus: 200,
-    preflightContinue: false,
+    origin:'*'
+    // optionsSuccessStatus: 200,
+    // preflightContinue: false,
 };
 app.use(function (req, res, next) {
   res.removeHeader( 'Vary');
@@ -52,16 +50,14 @@ app.use(morgan('common', {
 }))
 
 // for parsing application/json
-app.use(express.json());
+app.use(express.json({limit:'1mb'}));
 // for parsing application/xwww-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
-// const swaggerDocument: any = require('../swagger.json');
-// app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // router
 
 
-import routeUser from 'src/module/user/user.router';
+import routeUser from 'src/modules/user/user.router';
 app.use('/api/v1/administrator/user', routeUser);
 // end:router
 export default app;

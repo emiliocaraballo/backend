@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { userController } from 'src/module/user/user.controller';
+import { userController } from 'src/modules/user/user.controller';
 import { auth } from 'kernell-smartinfo';
 const router: Router = Router();
 router.post('/',[auth.validateTokenRoute],userController.validateUser);
