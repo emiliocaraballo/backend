@@ -2,7 +2,8 @@ import { Connection } from 'typeorm';
 import { Factory, Seeder } from 'typeorm-seeding';
 
  import { UserAdmin } from 'src/database/entity/userAdmin';
- import  {  Profile } from  'src/database/entity/profile'
+ import  { Profile } from  'src/database/entity/profile'
+ import  { MessageError } from  'src/database/entity/messageErrors'
 
 export default class CreateUser implements Seeder {
     public async run(factory: Factory, connection: Connection): Promise<any> {
@@ -33,8 +34,16 @@ export default class CreateUser implements Seeder {
         user.created_at=Date();
         user.user_created=1;
         user.password="$2b$10$AYPtKNuAQsEO8C0hKO0Bg.qZAkUxL2EcQDnvEz4r16eWxhsRGbZzC";
-        
-        
-        return await em.save(user);
+        await em.save(user)
+
+
+        const messageError=new MessageError();
+        messageError.code="USER_NOT_FOUND";
+        messageError.description="El usuario no se encuentra registrado.";
+        messageError.title="Lo sentimos.";
+        messageError.created_at=Date();
+        messageError.user_created=1; 
+        messageError.status=1;
+        return await em.save(messageError);
     }
   }

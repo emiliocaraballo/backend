@@ -479,9 +479,69 @@ export class init1643174315782 implements MigrationInterface {
                 onDelete: "CASCADE"
             }));
 
+
+            await queryRunner.createTable(new Table({
+                name: "message_errors",
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'varchar',
+                        generationStrategy: 'uuid',
+                        default: 'uuid_generate_v4()',
+                    },
+                    {
+                        name: 'sequence',
+                        type: 'int',
+                        isPrimary: true,
+                        generationStrategy: 'increment',
+                        isGenerated:true
+                    },
+                    {
+                        name: "title",
+                        type: "varchar"
+                    },
+                    {
+                        name: "code",
+                        type: "varchar"
+                    },
+                    {
+                        name: "description",
+                        type: "text"
+                    },
+                    {
+                        name: "status",
+                        type: "int"
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        default: 'now()'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        default: 'now()',
+                        isNullable:true
+                    },
+                    {
+                        name:'user_created',
+                        type:'int'
+                    },
+                    {
+                        name:'user_updated',
+                        type:'int',
+                        isNullable:true
+                    }
+                ]
+            }), true)
+
+
+
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
+        
+        await queryRunner.dropTable("message_errors");
         await queryRunner.dropTable("notifications_users");
         await queryRunner.dropTable("notifications");
         await queryRunner.dropTable("users_authentications");

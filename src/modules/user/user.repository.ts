@@ -1,24 +1,45 @@
-import { IQueryResponse } from 'kernell-smartinfo/dist/src/lib/interface'
-import {  UserAdmin } from 'src/database/entity/userAdmin'
+import { IQueryResponse } from 'src/interfaces/repository'
+import { UserAdmin } from 'src/database/entity/userAdmin'
 import { getRepository } from 'typeorm';
+import { to } from 'await-to-js';
 
 class UserRepository{
 
     public validateUser=async (user: string): Promise<IQueryResponse> => {
-        try {
-            const userRepo=await getRepository(UserAdmin).findOne({select:["email","identification","names","phone","id"],where:{email:user.toLocaleLowerCase()}});
+        const Query=getRepository(UserAdmin).findOne({select:["email","identification","names","phone","id"],where:{email:user.toLocaleLowerCase()}});
+        
+        const [errorResponse, response] = await to(Query);
+        
+        if (!response) {
             return {
-                ok: userRepo.id.length>0,
-                data: userRepo
+                statusCode:404,
+                message:'USER_NOT_FOUND'
             }
-        } catch (error) {
-            
         }
+
         return {
-            ok:false
+            statusCode:200,
+            data:response
+        }
+    }
+    
+    public changePassword=async (user: string): Promise<IQueryResponse> => {
+
+        const [errorResponse, response] = await to(this.validateUser(user));
+        if (!response) {
+            return {
+                statusCode:404,
+                message:'USER_NOT_FOUND'
+            }
+        }
+
+        // enviar la solicitud
+
+        return {
+            statusCode:200,
+            data:response
         }
     }
 
 }
-
 export const userRepository=new UserRepository;
