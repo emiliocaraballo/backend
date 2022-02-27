@@ -52,6 +52,8 @@ app.use(cors(optionscors));
 app.use(morgan('common', {
   stream: fs.createWriteStream(path.join(__dirname, '../errors/access.log'), { flags: 'a' })
 }))
+
+app.use(morgan('dev'));
 // for parsing application/json
 app.use(express.json({limit:'2mb'}));
 // for parsing application/xwww-form-urlencoded
