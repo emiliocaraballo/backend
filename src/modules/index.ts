@@ -13,10 +13,10 @@ app.use((err, req, res, next) => {
       // tuvimos un error joi, devolvamos una respuesta personalizada 400 json
       res.status(400).json({
         statusCode:400,
-        path: req.baseUrl,
+        title: err.type, //  será "consulta" aquí, pero podría ser "encabezados", "cuerpo" o "parámetros"
+        message: err.error.toString(),
         timestamp: new Date().toISOString(),
-        type: err.type, //  será "consulta" aquí, pero podría ser "encabezados", "cuerpo" o "parámetros"
-        message: err.error.toString()
+        path: req.baseUrl
       });
     } else {
       // pasar a otro controlador de errores

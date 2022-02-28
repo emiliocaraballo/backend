@@ -23,6 +23,7 @@ export default class CreateUser implements Seeder {
         await em.save(profile);
 
         const profileRepository=await connection.getRepository(Profile).findOne({sequence:1});
+        
         const user = new UserAdmin();
         user.names="Emilio Fernando Caraballo Dueñas";
         user.phone="3042334893";
@@ -34,16 +35,7 @@ export default class CreateUser implements Seeder {
         user.created_at=Date();
         user.user_created=1;
         user.password="$2b$10$AYPtKNuAQsEO8C0hKO0Bg.qZAkUxL2EcQDnvEz4r16eWxhsRGbZzC";
-        await em.save(user)
+        return await em.save(user)
 
-
-        const messageError=new MessageError();
-        messageError.code="USER_NOT_FOUND";
-        messageError.description="El usuario no se encuentra registrado.";
-        messageError.title="Lo sentimos.";
-        messageError.created_at=Date();
-        messageError.user_created=1; 
-        messageError.status=1;
-        return await em.save(messageError);
     }
   }

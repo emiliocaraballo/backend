@@ -1,5 +1,18 @@
 import * as Joi from 'joi';
 
-export const ValideUser=Joi.object({
-    username:Joi.string().email().required()
+const username = Joi.string().email().required();
+
+export const ValideUserJoi=Joi.object({
+    username:username
+});
+
+export const LoginJoi=Joi.object({
+    username:username,
+    password:Joi.string().required()
+});
+
+export const LoginTwoJoi=Joi.object({
+    username:username,
+    password:Joi.string().required(),
+    code:Joi.string().required()
 });

@@ -3,6 +3,7 @@ dotenv.config();
 import jwt from 'jsonwebtoken';
 import jwt_decode from 'jwt-decode';
 import { NextFunction, Request, Response } from 'express';
+import { customError } from "./customError";
 class Auth{
     public generateToken=async(data:any)=>{
         return jwt.sign({
@@ -33,27 +34,16 @@ class Auth{
         try {
             const token: string = req.headers.authorization + '';
             return jwt.verify(token, process.env.JWT_SECRET  + '', async (err) => {
-                if (err) return res.status(401).json({
-                    code: -2,
-                    message: 'Token Invalido'
-                });     
-    
-            const datatoken = jwt_decode(token);
-            req.body.users=datatoken;
-            next();
-        });
+                if (err) return customError.Error(req,res,401,"AUTHORIZATION_INVALID");
+                const datatoken = jwt_decode(token);
+                req.body.users=datatoken;
+                next();
+            });
             
         } catch (error) {
             
         }
-        const dataResponde={
-            code:"UNEXPECTED_ERROR",
-            description:"Ha ocurrido un error inesperado",
-            statusCode:401,
-            title:"Lo sentimos",
-            path:"ruta"
-        }
-        res.status(401).json(dataResponde)
+      return customError.Error(req,res,401,"AUTHORIZATION_FOUND")
     }
 }
 export const auth = new Auth;

@@ -2,6 +2,7 @@
 
 export interface IQueryResponse{
     statusCode: number
-    data?: any,
+    data?: any
+    token?:string
     message?: string
 }
