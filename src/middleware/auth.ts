@@ -5,13 +5,13 @@ import jwt_decode from 'jwt-decode';
 import { NextFunction, Request, Response } from 'express';
 import { customError } from "./customError";
 class Auth{
-    public generateToken=async(data:any)=>{
+    public generateToken=async(data:any,time:number=0)=>{
         return jwt.sign({
             data
         },
             process.env.JWT_SECRET+'',
             {
-                expiresIn: process.env.JWT_DURATION
+                expiresIn: time>0?time+'m':process.env.JWT_DURATION
             }
         );
     }

@@ -32,12 +32,39 @@ class Mailer{
           subject:subject,
           html: html,
         });
+        console.log(info.messageId);
         
         return info.messageId.length>0;
       } catch (error) {
         
       }
       return false;
+    }
+
+    public mainFormat=async(title:string,subject:string,body:string,to:string | any[],replay:string | any[])=>{
+      var nameProyect=String(process.env.NAME_PROYECT);
+      var html=/*html*/`
+      <html>
+        <head>
+            <title> ${title} - ${nameProyect}</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        </head>
+        <style>html,body { padding: 0; margin:0; }</style>
+        <body>
+          ${body}
+        </body>
+      </html>
+      `;
+
+      return await this.main(title+' - '+nameProyect,subject,html,to,replay);
+    }
+
+    public mainChangePassword=async(name:string,token:string)=>{
+      var url=process.env.URL_FRONTEND+"active-password?t="+token;
+      var html=/*html*/`
+          link: ${url}
+      `;
+      return await this.mainFormat('Olvidaste tu contraseña','Olvidaste tu contraseña',html,'emiliocaraballo9810@gmail.com',"");
     }
 }
 

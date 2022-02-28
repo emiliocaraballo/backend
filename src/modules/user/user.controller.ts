@@ -41,11 +41,9 @@ class UserController {
     }
 
     public changePassword= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
-        const { username }: IUser = req.body;
-        
-        // logica
+    
         const [error, result] = await to(
-         userRepository.changePassword(username)
+         userRepository.changePassword(req.body.username)
         ); 
         // si la respuesta no es exitosa. 
         if (result.statusCode!=200 && result.statusCode!=201) {

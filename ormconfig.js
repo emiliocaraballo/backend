@@ -12,6 +12,6 @@ module.exports = {
     "cli": {
       "migrationsDir": "src/database/migration"
     },
-    "logging": false,
+    "logging": process.env.NODE_ENV=='development',
     "synchronize": false
  }

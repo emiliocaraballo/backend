@@ -9,19 +9,17 @@ export class NotificationUser {
     sequence: number;  
     @Column({type:'int',/*length:1*/})
     status: number;
-    @Column({type:'timestamp',default:'now()'})
-    created_at: string;
-    @Column({type:'timestamp', nullable: true,default:'now()'})
-    updated_at: string;
-    @Column({type:'int'})
-    user_created: number;
-    @Column({type:'int', nullable: true})
-    user_updated: number;
-
+    @Column({name:'created_at',type:'timestamp',default:'now()'})
+    createdAt: string;
+    @Column({name:'updated_at',type:'timestamp', nullable: true,default:'now()'})
+    updatedAt: string;
+    @Column({name:'user_created',type:'int'})
+    userCreated: number;
+    @Column({name:'user_updated',type:'int', nullable: true})
+    userUpdated: number;
     @ManyToOne(() => Notification, notification => notification.sequence)
     @JoinColumn({name:'notifications_sequence'})
     notificationsSequence: Notification;
-    
     @ManyToOne(() => UserAdmin, userAdmin => userAdmin.sequence)
     @JoinColumn({name:'users_admins_sequence'})
     usersAdminsSequence: UserAdmin;

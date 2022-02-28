@@ -19,7 +19,11 @@ export const options = {
       tags:[
           {
               name:"users",
-              description:"Rutas de usuarios"
+              description:"Rutas de Usuarios"
+          },
+          {
+              name:"menus",
+              description:"Rutas de Menu"
           }
       ]
     },

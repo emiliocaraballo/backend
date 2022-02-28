@@ -535,12 +535,79 @@ export class init1643174315782 implements MigrationInterface {
                 ]
             }), true)
 
+            
+         
+
+            await queryRunner.createTable(new Table({
+                name: "users_password_historys",
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'varchar',
+                        generationStrategy: 'uuid',
+                        default: 'uuid_generate_v4()',
+                    },
+                    {
+                        name: 'sequence',
+                        type: 'int',
+                        isPrimary: true,
+                        generationStrategy: 'increment',
+                        isGenerated:true
+                    },
+                    {
+                        name: "user_admin_sequence",
+                        type: "int"
+                    },
+                    {
+                        name: "password_new",
+                        isNullable:true,
+                        type: "varchar"
+                    },
+                    {
+                        name: "password_old",
+                        isNullable:true,
+                        type: "varchar"
+                    },
+                    {
+                        name: "status",
+                        type: "int"
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        default: 'now()'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        default: 'now()',
+                        isNullable:true
+                    },
+                    {
+                        name:'user_created',
+                        type:'int'
+                    },
+                    {
+                        name:'user_updated',
+                        type:'int',
+                        isNullable:true
+                    }
+                ]
+            }), true)
+
+            await queryRunner.createForeignKey("users_password_historys", new TableForeignKey({
+                columnNames: ["user_admin_sequence"],
+                referencedColumnNames: ["sequence"],
+                referencedTableName: "users_admins",
+                onDelete: "CASCADE"
+            }));
 
 
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
         
+        await queryRunner.dropTable("users_password_historys");
         await queryRunner.dropTable("message_errors");
         await queryRunner.dropTable("notifications_users");
         await queryRunner.dropTable("notifications");

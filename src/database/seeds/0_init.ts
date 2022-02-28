@@ -18,8 +18,8 @@ export default class CreateUser implements Seeder {
         profile.status=1;
         profile.description="";
         profile.icon="";
-        profile.user_created=1;
-        profile.created_at=Date();
+        profile.userCreated=1;
+        profile.createdAt=Date();
         await em.save(profile);
 
         const profileRepository=await connection.getRepository(Profile).findOne({sequence:1});
@@ -32,8 +32,8 @@ export default class CreateUser implements Seeder {
         user.status=1;
         user.identification="1001972281";
         user.profileSequence=profileRepository;
-        user.created_at=Date();
-        user.user_created=1;
+        user.createdAt=Date();
+        user.userCreated=1;
         user.password="$2b$10$AYPtKNuAQsEO8C0hKO0Bg.qZAkUxL2EcQDnvEz4r16eWxhsRGbZzC";
         return await em.save(user)
 

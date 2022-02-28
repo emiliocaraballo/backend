@@ -10,8 +10,8 @@ export default class CreateMessage implements Seeder {
         messageError.code="USER_NOT_FOUND";
         messageError.description="El usuario no se encuentra registrado.";
         messageError.title="Lo sentimos.";
-        messageError.created_at=Date();
-        messageError.user_created=1; 
+        messageError.createdAt=Date();
+        messageError.userCreated=1; 
         messageError.status=1;
         await em.save(messageError);
 
@@ -19,8 +19,8 @@ export default class CreateMessage implements Seeder {
         messageError2.code="USER_PASSWORD_VERIFY";
         messageError2.description="El nombre de usuario o contraseña son incorrectos.";
         messageError2.title="Lo sentimos.";
-        messageError2.created_at=Date();
-        messageError2.user_created=1; 
+        messageError2.createdAt=Date();
+        messageError2.userCreated=1; 
         messageError2.status=1;
         await em.save(messageError2)
       
@@ -28,8 +28,8 @@ export default class CreateMessage implements Seeder {
         messageError3.code="AUTHORIZATION_FOUND";
         messageError3.description="No esta autenticado.";
         messageError3.title="Lo sentimos no tiene los permiso requerido.";
-        messageError3.created_at=Date();
-        messageError3.user_created=1; 
+        messageError3.createdAt=Date();
+        messageError3.userCreated=1; 
         messageError3.status=1;
         await em.save(messageError3);
 
@@ -37,10 +37,28 @@ export default class CreateMessage implements Seeder {
         messageError4.code="AUTHORIZATION_INVALID";
         messageError4.description="Su Auth ha expirado.";
         messageError4.title="Lo sentimos.";
-        messageError4.created_at=Date();
-        messageError4.user_created=1; 
+        messageError4.createdAt=Date();
+        messageError4.userCreated=1; 
         messageError4.status=1;
+        await em.save(messageError4)
+        const messageError5=new MessageError();
+        messageError5.code="NOT_REQUEST";
+        messageError5.description="No se pudo generar la solicitud, inténtalo de nuevo.";
+        messageError5.title="Lo sentimos.";
+        messageError5.createdAt=Date();
+        messageError5.userCreated=1; 
+        messageError5.status=1;
+        await em.save(messageError5)
+
+
+        const messageError6=new MessageError();
+        messageError6.code="PENDING_REQUEST";
+        messageError6.description="Tiene una solicitud pendiente que aun no ha expirado, por favor revise su correo electrónico.";
+        messageError6.title="Lo sentimos.";
+        messageError6.createdAt=Date();
+        messageError6.userCreated=1; 
+        messageError6.status=1;
        
-        return await em.save(messageError4);
+        return await em.save(messageError6);
     }
   }

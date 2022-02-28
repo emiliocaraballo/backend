@@ -1,28 +1,27 @@
 import {Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne} from 'typeorm'
 import { UserAdmin } from 'src/database/entity/userAdmin';
-@Entity({name:'users_authentications'})
-export class UserAuthentication {
+import { general } from 'src/config/general';
+@Entity({name:'users_password_historys'})
+export class UserPasswordHistory {
     @Column({type:'uuid'})
     id: string;
     @PrimaryGeneratedColumn()
     sequence: number;
-    @Column({name:'code_auth',type:"varchar"})
-    codeAuth: string;
-    @Column({name:'code_secret',type:"varchar"})
-    codeSecret: string;
-    @Column({name:'code_imagen',type:"text"})
-    codeImagen: string;
-    @Column({type:'int',/*length:1*/})
+    @Column({type:"varchar", nullable: true})
+    password_new: string;
+    @Column({type:"varchar", nullable: true})
+    password_old: string;
+    @Column({type:"int"})
     status: number;
-    @Column({name:'created_at',type:'timestamp',default:'now()'})
+    @Column({name:'created_at',type:'timestamp'})
     createdAt: string;
-    @Column({name:'updated_at',type:'timestamp', nullable: true,default:'now()'})
+    @Column({name:'updated_at',type:'timestamp', nullable: true})
     updatedAt: string;
     @Column({name:'user_created',type:'int'})
     userCreated: number;
     @Column({name:'user_updated',type:'int', nullable: true})
     userUpdated: number;
     @ManyToOne(() => UserAdmin, userAdmin => userAdmin.sequence)
-    @JoinColumn({name:'user_admins_sequence'})
+    @JoinColumn({name:'user_admin_sequence'})
     userAdminSequence: UserAdmin;
 }
