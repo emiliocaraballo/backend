@@ -1,9 +1,10 @@
-import { IQueryResponse } from 'src/interfaces/repository'
-import { UserAdmin } from 'src/database/entity/userAdmin'
 import { getRepository } from 'typeorm';
 import { to } from 'await-to-js';
 import bcrypt from 'bcryptjs';
-import { IUser } from './user.inferface';
+
+import { IQueryResponse } from 'src/interfaces/repository'
+import { UserAdmin } from 'src/database/entity/userAdmin'
+import { IUser } from "src/interfaces/user";
 import { auth } from 'src/middleware/auth';
 
 class UserRepository{

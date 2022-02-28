@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { IUser } from "src/modules/user/user.inferface";
+import { IUser } from "src/interfaces/user";
 import { userRepository} from 'src/modules/user/user.repository';
 import { to } from 'await-to-js';
 import { customError } from 'src/middleware/customError';
@@ -7,11 +7,9 @@ import { customError } from 'src/middleware/customError';
 class UserController {
 
     public validateUser= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
-        const { username }: IUser = req.body;
-        
-        // logica
+  
         const [error, result] = await to(
-         userRepository.validateUser(username)
+         userRepository.validateUser(req.body.username)
         );
          
         // si la respuesta no es exitosa. 
@@ -19,9 +17,6 @@ class UserController {
            return customError.Error(req,res,result.statusCode,result.message)
         }
         
-        // si viene el campo password se elimina con delete de arreglo.
-        delete result.data.password;
-
         // respuestado
         res.status(result.statusCode).json({
             success:true
@@ -57,9 +52,6 @@ class UserController {
            return customError.Error(req,res,result.statusCode,result.message)
         }
 
-
-
-        
         // respuestado
         res.status(result.statusCode).json({
             success:true
