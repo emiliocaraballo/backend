@@ -32,14 +32,17 @@ class Auth{
 
     public validateTokenRoute=async(req: Request, res: Response, next: NextFunction)=>{
         try {
-            const token: string = req.headers.authorization + '';
-            return jwt.verify(token, process.env.JWT_SECRET  + '', async (err) => {
-                if (err) return customError.Error(req,res,401,"AUTHORIZATION_INVALID");
-                const datatoken = jwt_decode(token);
-                req.body.users=datatoken;
-                next();
-            });
+            const token: string=req.headers.authorization + '';
+           
             
+            if(token!="undefined"){
+                return jwt.verify(token, process.env.JWT_SECRET  + '', async (err) => {
+                    if (err) return customError.Error(req,res,401,"AUTHORIZATION_INVALID");
+                    const datatoken = jwt_decode(token);
+                    req.body.users=datatoken;
+                    next();
+                });
+            }
         } catch (error) {
             
         }

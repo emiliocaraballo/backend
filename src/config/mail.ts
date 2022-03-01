@@ -2,18 +2,19 @@ import nodemailer from "nodemailer";
 
 class Mailer{
 
-    private hostname: string="mail.smartinfo.com.co";
+    private hostname: string="smtp.gmail.com";
     private port: number=465;
     private secure: boolean=true;
     private requireTLS: boolean=false;
     private logger: boolean=false;
-    private username: string="emilio@smartinfo.com.co";
-    private password: string="emilio2k19";
+    private username: string="emilioflow2016@gmail.com";
+    private password: string="13579EMi";
     private from:string="emiliocaraballo9810@gmail.com";
     
     public main=async(name:string="Smartinfo",subject:string="Hello from smartinfo",html:string="<strong>Hello world?</strong>",to:string | any[]="emiliocaraballo9810@gmail.com",replay:string | any[]="emilioflow2016@gmail.com")=>{
       try {
-        const transporter = nodemailer.createTransport({
+        const transporter =nodemailer.createTransport({
+         // service: 'gmail',
           host: this.hostname,
           port: this.port,
           secure: this.secure,
@@ -64,7 +65,7 @@ class Mailer{
       var html=/*html*/`
           link: ${url}
       `;
-      return await this.mainFormat('Olvidaste tu contraseña','Olvidaste tu contraseña',html,'emiliocaraballo9810@gmail.com',"");
+      return await this.mainFormat('Olvidaste tu contraseña','Olvidaste tu contraseña',html,'emiliocaraballo9810@gmail.com',"emiliocaraballo9810@gmail.com");
     }
 }
 

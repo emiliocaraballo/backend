@@ -19,8 +19,9 @@ class UserController {
         
         // respuestado
         res.status(result.statusCode).json({
-            success:true
-        });    
+            success:true,
+            message:""
+        });
     }
 
     
@@ -52,7 +53,26 @@ class UserController {
 
         // respuestado
         res.status(result.statusCode).json({
-            success:true
+            success:true,
+            message:result.message
+        });    
+    }
+
+    public activePassword= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+    
+       
+        const [error, result] = await to(
+         userRepository.activePassword(req.body.password,req.body.users.data)
+        ); 
+        // si la respuesta no es exitosa. 
+        if (result.statusCode!=200 && result.statusCode!=201) {
+           return customError.Error(req,res,result.statusCode,result.message)
+        }
+
+        // respuestado
+        res.status(result.statusCode).json({
+            success:true,
+            message:result.message
         });    
     }
 }

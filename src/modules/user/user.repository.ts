@@ -2,7 +2,7 @@ import { getRepository } from 'typeorm';
 import { to } from 'await-to-js';
 import bcrypt from 'bcryptjs';
 
-import { IQueryResponse } from 'src/interfaces/repository'
+import { IQueryResponse, ITokenActivePass } from 'src/interfaces/repository'
 import { UserAdmin } from 'src/database/entity/userAdmin'
 import { IUser } from "src/interfaces/user";
 import { auth } from 'src/middleware/auth';
@@ -85,7 +85,7 @@ class UserRepository{
         .where("userAdmin.sequence=:sequence",{sequence:sequence})
         .limit(1)
         .orderBy("userPasswordHistory.createdAt","DESC")
-        .getMany()
+        .getMany();
         
         const [errorPassword, responsePassword] = await to(QueryUserPasswordHistory);   
         if(responsePassword.length>0){
@@ -114,14 +114,88 @@ class UserRepository{
             userId:sequence
         }
         const token=await auth.generateToken(data,60);
-        // se envia al correo.
-        mailer.mainChangePassword(response.names,token);
+         console.log(token);
+          // se envia al correo.
+         mailer.mainChangePassword(response.names,token);
         return {
-            statusCode:200
+            statusCode:201,
+            message:"Su solicitud ha sido exitosa"
+        }
+    }
+
+    public activePassword=async (password:string,data:ITokenActivePass): Promise<IQueryResponse> => {
+
+        const UserPasswordHistorySeq=data.sequence;
+
+        const Query=getRepository(UserAdmin).findOne({select:["email","names","id","sequence","password"],where:{sequence:data.userId}});
+        const [errorResponse, response] = await to(Query);
+        if (!response) {
+            return {
+                statusCode:404,
+                message:'USER_NOT_FOUND'
+            }
+        }
+        // el sequence se usuario
+        const userId=response.sequence;
+
+        const QueryUserPasswordHistory=getRepository(UserPasswordHistory).createQueryBuilder("userPasswordHistory")
+        .innerJoin("users_admins","userAdmin","userPasswordHistory.user_admin_sequence=userAdmin.sequence")
+        .where("userPasswordHistory.sequence=:sequence",{sequence:UserPasswordHistorySeq})
+        .limit(1)
+        .getMany();
+        
+        const [errorPassword, responsePassword] = await to(QueryUserPasswordHistory);   
+        if(!responsePassword){
+            return {
+                statusCode:400,
+                message:'PENDING_REQUEST'
+            }
+        }
+       
+        if(responsePassword[0].status==1){
+            return {
+                statusCode:400,
+                message:'NOT_INVALID_REQUEST'
+            }
+        }
+        
+
+        var passwordOld= response.password;
+        var passwordNew= password;
+       
+        const isUpdatePass=await getRepository(UserPasswordHistory).update(UserPasswordHistorySeq,{
+            password_new:passwordNew,
+            password_old:passwordOld,
+            updatedAt:general.dateNow(),
+            status:1
+        });
+
+        if(isUpdatePass.affected==0){
+            return {
+                statusCode:400,
+                message:'NOT_REQUEST'
+            }
+        }
+
+        // se cambia la contraseña en el usuario
+        const isUpdateUser=await getRepository(UserAdmin).update(userId,{
+            password:passwordNew,
+            updatedAt:general.dateNow()
+        });
+        if(isUpdateUser.affected==0){
+            return {
+                statusCode:400,
+                message:'NOT_REQUEST'
+            }
+        }      
+        return {
+            statusCode:201,
+            message:"Su contraseña ha sido cambiada de forma exitosa."
         }
     }
 
 
+    
     // general una nueva solicitd para cambio de contraseña
     private createPasswordHistory=async(user:UserAdmin): Promise<boolean | number | undefined> =>{
          

@@ -26,8 +26,8 @@ export default class CreateMessage implements Seeder {
       
         const messageError3=new MessageError();
         messageError3.code="AUTHORIZATION_FOUND";
-        messageError3.description="No esta autenticado.";
-        messageError3.title="Lo sentimos no tiene los permiso requerido.";
+        messageError3.description="No tiene los permiso requerido.";
+        messageError3.title="Lo sentimos.";
         messageError3.createdAt=Date();
         messageError3.userCreated=1; 
         messageError3.status=1;
@@ -41,9 +41,10 @@ export default class CreateMessage implements Seeder {
         messageError4.userCreated=1; 
         messageError4.status=1;
         await em.save(messageError4)
+
         const messageError5=new MessageError();
         messageError5.code="NOT_REQUEST";
-        messageError5.description="No se pudo generar la solicitud, inténtalo de nuevo.";
+        messageError5.description="No se pudo completar la solicitud, inténtalo de nuevo.";
         messageError5.title="Lo sentimos.";
         messageError5.createdAt=Date();
         messageError5.userCreated=1; 
@@ -52,13 +53,27 @@ export default class CreateMessage implements Seeder {
 
 
         const messageError6=new MessageError();
-        messageError6.code="PENDING_REQUEST";
-        messageError6.description="Tiene una solicitud pendiente que aun no ha expirado, por favor revise su correo electrónico.";
+        messageError6.code="NOT_INVALID_REQUEST";
+        messageError6.description="Ya esta solicitud ha sido procesada anteriormente.";
         messageError6.title="Lo sentimos.";
         messageError6.createdAt=Date();
         messageError6.userCreated=1; 
         messageError6.status=1;
+        await em.save(messageError6)
+
+
+
+
+
+
+        const messageError0=new MessageError();
+        messageError0.code="PENDING_REQUEST";
+        messageError0.description="Tiene una solicitud pendiente que aun no ha expirado, por favor revise su correo electrónico.";
+        messageError0.title="Lo sentimos.";
+        messageError0.createdAt=Date();
+        messageError0.userCreated=1; 
+        messageError0.status=1;
        
-        return await em.save(messageError6);
+        return await em.save(messageError0);
     }
   }
