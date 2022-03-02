@@ -12,6 +12,8 @@ class UserController {
          userRepository.validateUser(req.body.username)
         );
          
+        console.log(result);
+        
         // si la respuesta no es exitosa. 
         if (result.statusCode!=200) {
            return customError.Error(req,res,result.statusCode,result.message)
@@ -33,6 +35,7 @@ class UserController {
         if (result.statusCode!=200) {
            return customError.Error(req,res,result.statusCode,result.message)
         }
+        console.log(result);
         
         // respuestado
         res.status(result.statusCode).json({
@@ -51,6 +54,8 @@ class UserController {
            return customError.Error(req,res,result.statusCode,result.message)
         }
 
+        console.log(result);
+        
         // respuestado
         res.status(result.statusCode).json({
             success:true,
@@ -64,10 +69,12 @@ class UserController {
         const [error, result] = await to(
          userRepository.activePassword(req.body.password,req.body.users.data)
         ); 
+        console.log(result);
         // si la respuesta no es exitosa. 
         if (result.statusCode!=200 && result.statusCode!=201) {
            return customError.Error(req,res,result.statusCode,result.message)
         }
+        
 
         // respuestado
         res.status(result.statusCode).json({

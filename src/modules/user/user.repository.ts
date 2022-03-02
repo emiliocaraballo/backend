@@ -16,7 +16,6 @@ class UserRepository{
         const Query=getRepository(UserAdmin).findOne({select:["email","identification","names","phone","id"],where:{email:user.toLocaleLowerCase()}});
         
         const [errorResponse, response] = await to(Query);
-        
         if (!response) {
             return {
                 statusCode:404,
@@ -69,8 +68,11 @@ class UserRepository{
     
     public changePassword=async (user: string): Promise<IQueryResponse> => {
 
+       
+        
         const Query=getRepository(UserAdmin).findOne({select:["email","names","id","sequence"],where:{email:user.toLocaleLowerCase()}});
         const [errorResponse, response] = await to(Query);
+       
         if (!response) {
             return {
                 statusCode:404,
@@ -80,6 +82,8 @@ class UserRepository{
         // el sequence se usuario
         const sequence=response.sequence;
 
+      
+
         const QueryUserPasswordHistory=getRepository(UserPasswordHistory).createQueryBuilder("userPasswordHistory")
         .innerJoin("users_admins","userAdmin","userPasswordHistory.user_admin_sequence=userAdmin.sequence")
         .where("userAdmin.sequence=:sequence",{sequence:sequence})
@@ -87,7 +91,9 @@ class UserRepository{
         .orderBy("userPasswordHistory.createdAt","DESC")
         .getMany();
         
-        const [errorPassword, responsePassword] = await to(QueryUserPasswordHistory);   
+        const [errorPassword, responsePassword] = await to(QueryUserPasswordHistory);  
+        
+        
         if(responsePassword.length>0){
             // paso 1 ver si ya expiro y si el estado es 0
             var status:number=responsePassword[0].status;
@@ -100,6 +106,9 @@ class UserRepository{
                 }
             }
         }
+
+       
+
         const result=await this.createPasswordHistory(response);
         if(!result){
             // no se pudo general la solicitud.
@@ -114,7 +123,7 @@ class UserRepository{
             userId:sequence
         }
         const token=await auth.generateToken(data,60);
-         console.log(token);
+         
           // se envia al correo.
          mailer.mainChangePassword(response.names,token);
         return {
@@ -182,12 +191,15 @@ class UserRepository{
             password:passwordNew,
             updatedAt:general.dateNow()
         });
+        
         if(isUpdateUser.affected==0){
             return {
                 statusCode:400,
                 message:'NOT_REQUEST'
             }
-        }      
+        }  
+        
+        
         return {
             statusCode:201,
             message:"Su contraseña ha sido cambiada de forma exitosa."
