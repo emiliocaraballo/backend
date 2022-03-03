@@ -16,4 +16,5 @@ export interface ITokenUserAuth{
 export interface ITokenActivePass{
     sequence: number
     userId: number
+
 }

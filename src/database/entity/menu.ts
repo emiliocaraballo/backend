@@ -15,6 +15,8 @@ export class Menu {
     parentid: number;
     @Column({type:"varchar"})
     url: string;
+    @Column({type:"varchar"})
+    icon: string;
     @Column({type:'int',/*length:1*/})
     status: number;
     @Column({name:'created_at',type:'timestamp',default:'now()'})

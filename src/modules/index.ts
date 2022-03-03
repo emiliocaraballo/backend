@@ -5,6 +5,9 @@ const app=express();
 import routeUser from 'src/modules/user/user.router';
 app.use('/users', routeUser);
 
+import routeMenu from 'src/modules/menu/menu.router';
+app.use('/menu', routeMenu);
+
 //end:se importa lo modulo a usar en la aplicacion.
 
 // para definir el tipo  de estructura de error 400 que son tema de error parametro,body,query etc.

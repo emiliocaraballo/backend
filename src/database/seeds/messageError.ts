@@ -61,6 +61,15 @@ export default class CreateMessage implements Seeder {
         messageError6.status=1;
         await em.save(messageError6)
 
+        const messageError7=new MessageError();
+        messageError7.code="MENU_NOT_FOUND";
+        messageError7.description="El menu no existe, por favor verifique la información.";
+        messageError7.title="Lo sentimos.";
+        messageError7.createdAt=Date();
+        messageError7.userCreated=1; 
+        messageError7.status=1;
+        await em.save(messageError7)
+
 
 
 

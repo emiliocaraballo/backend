@@ -16,6 +16,7 @@ class Auth{
         );
     }
   
+    // __comecy__
     public validateToken=async(token:string)=>{
         try {
             return jwt.verify(token, process.env.JWT_SECRET  + '', async (err) => {

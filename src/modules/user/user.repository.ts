@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 import { IQueryResponse, ITokenActivePass } from 'src/interfaces/repository'
 import { UserAdmin } from 'src/database/entity/userAdmin'
-import { IUser } from "src/interfaces/user";
+import { IUser, IUserData } from "src/interfaces/user";
 import { auth } from 'src/middleware/auth';
 import { UserPasswordHistory } from 'src/database/entity/userPasswordHistory';
 import { general } from 'src/config/general';
@@ -31,7 +31,7 @@ class UserRepository{
 
     public login=async (data: IUser): Promise<IQueryResponse> => {
 
-        const Query=getRepository(UserAdmin).findOne({select:["email","identification","names","phone","id","password"],where:{email:data.username.toLocaleLowerCase()}});
+        const Query=getRepository(UserAdmin).findOne({select:["email","identification","names","phone","id","password","sequence"],where:{email:data.username.toLocaleLowerCase()}});
       
 
         const [errorResponse, response] = await to(Query);
@@ -49,16 +49,21 @@ class UserRepository{
             }
         }
 
-        const user={
+        const userT:IUserData={
             id:response.id,
-            names:response.names,
-            phone:response.phone,
-            identification:response.identification,
-            email:response.email,
+            sequence:response.sequence
         }
 
-       const token=await auth.generateToken(user)
+       const token=await auth.generateToken(userT);
 
+       const user={
+        id:response.id,
+        sequence:response.sequence,
+        names:response.names,
+        phone:response.phone,
+        identification:response.identification,
+        email:response.email,
+        }
         return {
             statusCode:200,
             token:token,

@@ -74,6 +74,13 @@ export class init1643174315782 implements MigrationInterface {
             ]
         }), true)
 
+        await queryRunner.createForeignKey("menus", new TableForeignKey({
+            columnNames: ["parentid"],
+            referencedColumnNames: ["sequence"],
+            referencedTableName: "menus",
+            onDelete: "CASCADE"
+        }));
+
         // profile
         await queryRunner.createTable(new Table({
             name: "profiles",

@@ -5,7 +5,7 @@ import { MessageError } from 'src/database/entity/messageErrors';
 import { to } from 'await-to-js';
 
 class CustomError{
-    public Error=async(req:Request,res:Response,status:number,code:string)=>{
+    public Error=async(req:Request,res:Response,status:number,code:string,data?:any)=>{
         const Query=getRepository(MessageError).findOne({select:["title","description"],where:{code:code,status:1}});
         const [errorResponse, response] = await to(Query);
 
@@ -22,7 +22,8 @@ class CustomError{
             title:title,
             message:description,
             timestamp: new Date().toISOString(),
-            path:req.baseUrl
+            path:req.baseUrl,
+            data
         });
         return;
     }
