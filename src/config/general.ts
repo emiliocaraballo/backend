@@ -1,6 +1,7 @@
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import moment from 'moment';
+import bcrypt from 'bcryptjs';
 
 class General{
 
@@ -69,6 +70,18 @@ class General{
         return {token:token,otpauth_url:otpauth_url,imagen:imagen};
     }
     // fin google autenticador
+
+
+    // cifrado de una solo via
+    public encryptOne=async(text:string)=>{
+        return bcrypt.hash(text,10);
+    }
+
+     //  comparar cifrado con el hash de una solo via
+     public encryptCompareOne=async(text:string,hash:string)=>{
+        return bcrypt.compare(text,hash);
+    }
+
  }
  
  export const general=new General;

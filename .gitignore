@@ -3,6 +3,7 @@ errors/*
 docker-compose.yml
 uploads/*
 !uploads/read.txt
+.vscode/
 
 
 public/*

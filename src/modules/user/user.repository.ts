@@ -1,6 +1,5 @@
 import { getRepository } from 'typeorm';
 import { to } from 'await-to-js';
-import bcrypt from 'bcryptjs';
 
 import { IQueryResponse, ITokenActivePass } from 'src/interfaces/repository'
 import { UserAdmin } from 'src/database/entity/userAdmin'
@@ -175,7 +174,7 @@ class UserRepository{
         
 
         var passwordOld= response.password;
-        var passwordNew= password;
+        var passwordNew=await general.encryptOne(password) ;
        
         const isUpdatePass=await getRepository(UserPasswordHistory).update(UserPasswordHistorySeq,{
             password_new:passwordNew,
@@ -235,7 +234,7 @@ class UserRepository{
 
     // se valida el password si es igual para el hash
     private checkPassword=async (password:string,passwordHash:string): Promise<boolean> => {
-        return bcrypt.compare(password,passwordHash);
+        return general.encryptCompareOne(password,passwordHash);
     }
 }
 export const userRepository=new UserRepository;

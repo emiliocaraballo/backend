@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { IUser } from "src/interfaces/user";
 import { userRepository} from 'src/modules/user/user.repository';
 import { to } from 'await-to-js';
 import { customError } from 'src/middleware/customError';
