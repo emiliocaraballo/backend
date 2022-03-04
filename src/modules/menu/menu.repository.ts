@@ -41,6 +41,18 @@ class MenuRepository{
 
     public update=async (menu: IMenu,sequence:number): Promise<IQueryResponse> => {
 
+        const QueryFind= await getRepository(Menu).findOne(sequence,{
+            select:["sequence"]
+        })
+
+        if(!QueryFind){
+            return {
+                statusCode:404,
+                message:"MENU_NOT_FOUND"
+            }
+        }
+        
+
         const Query= getRepository(Menu).update(
             sequence,
             {
@@ -57,6 +69,8 @@ class MenuRepository{
         );
  
         const [error,result]= await to(Query);
+
+        
         if(error || result.affected==0){
              return {
                  statusCode:404,

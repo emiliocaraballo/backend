@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import { menuRepository  } from 'src/modules/menu/menu.repository';
+import { profileRepository  } from 'src/modules/profile/profile.repository';
 import { to } from 'await-to-js';
 import { customError } from 'src/middleware/customError';
 
-class MenuController {
+class ProfileController {
 
     public create= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
   
         const [error, result] = await to(
-            menuRepository.create(req.body)
+            profileRepository.create(req.body)
         );
         // si la respuesta no es exitosa. 
         if (result.statusCode!=201) {
@@ -25,7 +25,7 @@ class MenuController {
   
         var sequence:number=parseInt(req.params.sequence); 
         const [error, result] = await to(
-            menuRepository.update(req.body,sequence)
+            profileRepository.update(req.body,sequence)
         );
         // si la respuesta no es exitosa. 
         if (result.statusCode!=201) {
@@ -38,21 +38,5 @@ class MenuController {
         });
     }
 
-    public findMenuParent= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
-  
-        var sequence:number=parseInt(req.params.sequence);
-        const [error, result] = await to(
-            menuRepository.findMenuParentId(sequence)
-        );
-        // si la respuesta no es exitosa. 
-        if (result.statusCode!=200) {
-           return customError.Error(req,res,result.statusCode,result.message);
-        }
-        // respuestado
-        res.status(result.statusCode).json({
-            data:result.data
-        });
-    }
-
 }
-export const menuController = new MenuController;
+export const profileController = new ProfileController;

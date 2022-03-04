@@ -3,6 +3,8 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import multer from 'multer';
+import winston from 'winston';
+import expressWinston  from 'express-winston';
 
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -45,15 +47,20 @@ app.use(function (req, res, next) {
   res.setHeader( 'x-content-type-options', 'nosniff' );
   next();
 });
+
+
+
 app.use(cors(optionscors));
 // guardar los access.log y error.log y mas infomrmacion importante
 // que se elimine cada 3 meses lo archivo. y errores por dia.
 // log all requests to access.log
+// create a rotating write stream
+
 app.use(morgan('common', {
-  stream: fs.createWriteStream(path.join(__dirname, '../errors/access.log'), { flags: 'a' })
+  stream:  fs.createWriteStream(path.join(__dirname, '../errors/access.log'), {  interval: '1d',flags: 'a' })
 }))
 
-app.use(morgan('dev'));
+//app.use(morgan('dev'));
 // for parsing application/json
 app.use(express.json({limit:'2mb'}));
 // for parsing application/xwww-form-urlencoded

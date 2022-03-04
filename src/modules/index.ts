@@ -8,6 +8,9 @@ app.use('/users', routeUser);
 import routeMenu from 'src/modules/menu/menu.router';
 app.use('/menu', routeMenu);
 
+import routeProfile from 'src/modules/profile/profile.router';
+app.use('/profile', routeProfile);
+
 //end:se importa lo modulo a usar en la aplicacion.
 
 // para definir el tipo  de estructura de error 400 que son tema de error parametro,body,query etc.
