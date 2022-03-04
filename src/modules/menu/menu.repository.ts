@@ -4,7 +4,6 @@ import { getRepository } from 'typeorm';
 import { Menu } from 'src/database/entity/menu';
 import { general } from 'src/config/general';
 import to from 'await-to-js';
-import { Query } from 'tsoa';
 import { object } from 'joi';
 
 class MenuRepository{
@@ -40,48 +39,47 @@ class MenuRepository{
         }
     }
 
-    public findMenuParent=async (sequence: number): Promise<IQueryResponse> => {
-        
-        const Query=getRepository(Menu).findOne({
-            where:{
-                sequence:sequence,
-                parentid:null
-            }
-        })
+    public update=async (menu: IMenu,sequence:number): Promise<IQueryResponse> => {
 
-        const [error,respose]= await to(Query);        
-        if(!respose){
-            return {
-                statusCode:404,
-                message:"MENU_NOT_FOUND"
+        const Query= getRepository(Menu).update(
+            sequence,
+            {
+                updatedAt: general.dateNow(),
+                name: menu.name,
+                description: menu.description,
+                order: menu.order,
+                parentid: (menu.parentid==0)?null:menu.parentid,
+                status: menu.status,
+                url: menu.url,
+                icon: menu.icon,
+                userUpdated: menu.users.data.sequence
             }
+        );
+ 
+        const [error,result]= await to(Query);
+        if(error || result.affected==0){
+             return {
+                 statusCode:404,
+                 message:"NOT_REQUEST"
+             }
         }
-
-
-        const menu=await this.findMenuId(sequence,respose);
-       
+ 
          return {
-             statusCode:menu.statusCode,
-             data:menu.data
+             statusCode:201
          }
-    }
+     }
+ 
+   
 
-    private findMenuId=async(sequence: number,menuData:Menu): Promise<IQueryResponse>=>{
+    public findMenuParentId=async(sequence: number): Promise<IQueryResponse>=>{
 
-         
-        const Query=getRepository(Menu).find({
+        const QuerySequence=getRepository(Menu).findOne({
             where:{
-                parentid:sequence
+                sequence:sequence
             }
         })
-
-        const [error,respose]= await to(Query);  
-
-
-       const menu=await this.findMenuTree(respose,sequence);
-      
-
-        if(!respose){
+        const [errorSequence,resposeSequence]= await to(QuerySequence);  
+        if(!resposeSequence){
             // error
             return {
                 statusCode:404,
@@ -89,83 +87,54 @@ class MenuRepository{
             }
         }
 
-
+        const menu=await this.findMenuTree(sequence);
         return {
             statusCode:200,
             data:{
-                sequence:menuData.sequence,
-                name:menuData.name,
-                description:menuData.description,
+                sequence:resposeSequence.sequence,
+                name:resposeSequence.name,
+                description:resposeSequence.description,
                 menu:menu
             }
         };
-
     }
 
-    private findMenuTree=async(data: any,sequence:number): Promise<any>=>{
-        var nodes: any[]=[];
 
-        data.forEach((item: any) => {
-            nodes.push({id:item.sequence,parent:(item.parentid==null)?0:item.parentid});
-        });  
-        var t = [];
-        for (var i = 0; i < nodes.length; i++) {
-            t[nodes[i].id] = nodes[i].parent;
-        }  
-        // agruparlo
-        return await this.f(t, sequence);
-    }
+    private findMenuTree=async(parentId:number)=>{
 
-    private getMenu=async (sequence:number): Promise<IQueryResponse> => {
-       
-        const Query=getRepository(Menu).findOne({
-            where:{
-                sequence:sequence
-            }
-        })
-        const [error,respose]= await to(Query);  
-        return {
-            statusCode: 200,
-            data: respose
-        }
-
-    }
-
-    private f=async (t: string | any[],c: number): Promise<any>=>{
-        // The output structure
-        var a = [];
-        // We loop through all the nodes to fill `a`
-        // console.log(t,"t");
-        // console.log(Object.values(t),"t");
-
-        console.log(t,c);
+        var menu=[];
         
-        Object.keys(t).forEach(async element => {
-         //  if(parseInt(element)===c){
-               var i=0;
-                const response: IQueryResponse =await this.getMenu(parseInt(element));
+        const Query=getRepository(Menu).find({
+            where:{
+                parentid:parentId
+            }
+        });
+        const [error,respose]= await to(Query);
+
+    
+        if(respose.length>0){
+            
+            await Promise.all(respose.map(async (item) => {
                 var icon="";
-                if(response.data.icon!=null){
-                    icon=response.data.icon;
+                if(item.icon!=null){
+                    icon=item.icon;
                 }
-                a.push({
-                    id: parseInt(element)  ,
-                    title: response.data.name,
-                    path: response.data.url,
-                    orden: response.data.order,
-                    description: response.data.description,
-                    status: response.data.status,
+                menu.push({
+                    id: item.sequence,
+                    title: item.name,
+                    path: item.url,
+                    orden: item.order,
+                    description: item.description,
+                    status: item.status,
                     icon: icon,
                     // The `sub` property's value is generated recursively
-                    children: await this.f(t,parseInt(element))
+                    children: await this.findMenuTree(item.sequence)
                 });
-         //  }
-            
-        });
-    
+            }));
+          
+        }
 
-        // Finish by returning the `a` array
-        return a;
+        return menu;
     }
 }
 export const menuRepository=new MenuRepository;

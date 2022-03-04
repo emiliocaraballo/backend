@@ -21,11 +21,30 @@ class MenuController {
         });
     }
 
+    public update= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+  
+        var sequence:number=parseInt(req.params.sequence);
+        console.log(sequence,"sequence");
+        
+        const [error, result] = await to(
+            menuRepository.update(req.body,sequence)
+        );
+        // si la respuesta no es exitosa. 
+        if (result.statusCode!=201) {
+           return customError.Error(req,res,result.statusCode,result.message);
+        }
+        // respuestado
+        res.status(result.statusCode).json({
+            success:true,
+            message:""
+        });
+    }
+
     public findMenuParent= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
   
         var sequence:number=parseInt(req.params.sequence);
         const [error, result] = await to(
-            menuRepository.findMenuParent(sequence)
+            menuRepository.findMenuParentId(sequence)
         );
         // si la respuesta no es exitosa. 
         if (result.statusCode!=200) {
