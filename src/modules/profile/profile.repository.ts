@@ -83,39 +83,33 @@ class ProfileRepository{
 
     public update=async (menu: IProfile,sequence:number): Promise<IQueryResponse> => {
 
-        const QueryFind= await getRepository(Profile).findOne(sequence,{
-            select:["sequence"]
-        })
+           // get a connection and create a new query runner 
+           const connection = getConnection(); const queryRunner = connection.createQueryRunner(); 
+           // establish real database connection using our new query runner
+           await queryRunner.connect();
+           // lets now open a new transaction:
+           await queryRunner.startTransaction();
 
-        if(!QueryFind){
-            return {
-                statusCode:404,
-                message:"MENU_NOT_FOUND"
+
+           const profile=new Profile();
+           profile.sequence=sequence;
+           profile.createdAt=general.dateNow();
+           profile.updatedAt=general.dateNow();
+           profile.name=menu.name;
+           profile.description=menu.description;
+           profile.status=menu.status;
+           profile.icon=menu.icon;
+           profile.userCreated=menu.users.data.sequence;
+           profile.userUpdated=menu.users.data.sequence;
+           const [errorProfile,responseProfile]=await to(queryRunner.manager.save(profile));
+
+           if(!responseProfile){
+                await queryRunner.rollbackTransaction();
+                return {
+                    statusCode:404,
+                    message:"NOT_REQUEST"
+                }
             }
-        }
-        
-
-        const Query= getRepository(Profile).update(
-            sequence,
-            {
-                updatedAt: general.dateNow(),
-                name: menu.name,
-                description: menu.description,
-                status: menu.status,
-                icon: menu.icon,
-                userUpdated: menu.users.data.sequence
-            }
-        );
- 
-        const [error,result]= await to(Query);
-
-        
-        if(error || result.affected==0){
-             return {
-                 statusCode:404,
-                 message:"NOT_REQUEST"
-             }
-        }
  
          return {
              statusCode:201
