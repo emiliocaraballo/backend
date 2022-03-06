@@ -18,4 +18,5 @@ router.post('/login',[validator.body(LoginJoi)],[userController.login]);
 router.post('/change-password',[validator.body(ValideUserJoi)],[userController.changePassword]);
 router.post('/active-password',[auth.validateTokenRoute,validator.body(ActivePassJoi)],[userController.activePassword]);
 router.post('/create',[auth.validateTokenRoute,validator.body(CreateUserJoi)],[userController.create]);
+router.put('/:sequence',[auth.validateTokenRoute,validator.body(CreateUserJoi)],[userController.update]);
 export default router;

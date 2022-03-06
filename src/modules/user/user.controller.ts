@@ -91,6 +91,26 @@ class UserController {
             message:result.message
         });    
     }
+
+    public update= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+    
+       
+        const [error, result] = await to(
+         userRepository.update(req.body,req.body.users.data)
+        ); 
+       
+        // si la respuesta no es exitosa. 
+        if (result.statusCode!=201) {
+           return customError.Error(req,res,result.statusCode,result.message)
+        }
+        
+
+        // respuestado
+        res.status(result.statusCode).json({
+            success:true,
+            message:result.message
+        });    
+    }
     
     
 }

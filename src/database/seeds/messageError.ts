@@ -77,6 +77,22 @@ export default class CreateMessage implements Seeder {
         messageError7.userCreated=1; 
         messageError7.status=1;
         await em.save(messageError7)
+     
+        messageError7.code="EMAIL_EXISTS";
+        messageError7.description="Este email ya existe.";
+        messageError7.title="Lo sentimos.";
+        messageError7.createdAt=Date();
+        messageError7.userCreated=1; 
+        messageError7.status=1;
+        await em.save(messageError7)
+
+        messageError7.code="IDENTIFICATION_EXISTS";
+        messageError7.description="La Identificación ya existe.";
+        messageError7.title="Lo sentimos.";
+        messageError7.createdAt=Date();
+        messageError7.userCreated=1; 
+        messageError7.status=1;
+        await em.save(messageError7)
 
 
 

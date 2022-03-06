@@ -213,6 +213,58 @@ class UserRepository{
 
     public create=async (user:IUser,data:ITokenActivePass): Promise<IQueryResponse> => {
 
+        var Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{email:user.mail.toLocaleLowerCase()}});
+        var [errorResponse, response] = await to(Query);
+        if (errorResponse || !response) {
+            return {
+                statusCode:404,
+                message:'EMAIL_EXISTS'
+            }
+        }
+        
+         Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{identification:user.identification.toLocaleLowerCase()}});
+         [errorResponse, response] = await to(Query);
+        if (errorResponse || !response) {
+            return {
+                statusCode:404,
+                message:'IDENTIFICATION_EXISTS'
+            }
+        }
+
+
+         Query=getRepository(User).save(
+            {
+                createdAt:general.dateNow(),
+                updatedAt:general.dateNow(),
+                email:user.mail.toLocaleLowerCase(),
+                identification:user.identification,
+                name:user.name,
+                last_name:user.last_name,
+                phone:user.phone,
+                status:user.status,
+                userCreated:data.userId,
+                userUpdated:data.userId,
+                password:await general.encryptOne(user.password)
+            }
+         );
+         [errorResponse, response] = await to(Query);
+         if (errorResponse || !response) {
+            return {
+                statusCode:404,
+                message:'NOT_REQUEST'
+            }
+        }
+
+       
+    
+        return {
+            statusCode:201,
+            message:"EL usuario ha sido creado con exito."
+        }
+    }
+
+    public update=async (user:IUser,data:ITokenActivePass): Promise<IQueryResponse> => {
+
        
     
         return {
