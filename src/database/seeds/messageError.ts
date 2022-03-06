@@ -70,31 +70,41 @@ export default class CreateMessage implements Seeder {
         messageError7.status=1;
         await em.save(messageError7)
      
-        messageError7.code="PROFILE_NOT_FOUND";
-        messageError7.description="El perfil no existe, por favor verifique la información.";
-        messageError7.title="Lo sentimos.";
-        messageError7.createdAt=Date();
-        messageError7.userCreated=1; 
-        messageError7.status=1;
-        await em.save(messageError7)
+        const messageError8=new MessageError();
+        messageError8.code="PROFILE_NOT_FOUND";
+        messageError8.description="El perfil no existe, por favor verifique la información.";
+        messageError8.title="Lo sentimos.";
+        messageError8.createdAt=Date();
+        messageError8.userCreated=1; 
+        messageError8.status=1;
+        await em.save(messageError8)
      
-        messageError7.code="EMAIL_EXISTS";
-        messageError7.description="Este email ya existe.";
-        messageError7.title="Lo sentimos.";
-        messageError7.createdAt=Date();
-        messageError7.userCreated=1; 
-        messageError7.status=1;
-        await em.save(messageError7)
+        const messageError9=new MessageError();
+        messageError9.code="EMAIL_EXISTS";
+        messageError9.description="Este email ya existe.";
+        messageError9.title="Lo sentimos.";
+        messageError9.createdAt=Date();
+        messageError9.userCreated=1; 
+        messageError9.status=1;
+        await em.save(messageError9)
 
-        messageError7.code="IDENTIFICATION_EXISTS";
-        messageError7.description="La Identificación ya existe.";
-        messageError7.title="Lo sentimos.";
-        messageError7.createdAt=Date();
-        messageError7.userCreated=1; 
-        messageError7.status=1;
-        await em.save(messageError7)
+        const messageError10=new MessageError();
+        messageError10.code="IDENTIFICATION_EXISTS";
+        messageError10.description="La Identificación ya existe.";
+        messageError10.title="Lo sentimos.";
+        messageError10.createdAt=Date();
+        messageError10.userCreated=1; 
+        messageError10.status=1;
+        await em.save(messageError10);
 
 
+        // const messageError11=new MessageError();
+        // messageError11.code="PROFILE_NOT_FOUND";
+        // messageError11.description="El perfil no existe, por favor verifique la información.";
+        // messageError11.title="Lo sentimos.";
+        // messageError11.createdAt=Date();
+        // messageError11.userCreated=1; 
+        // messageError11.status=1;
 
 
 
@@ -106,6 +116,8 @@ export default class CreateMessage implements Seeder {
         messageError0.createdAt=Date();
         messageError0.userCreated=1; 
         messageError0.status=1;
+       
+      
        
         return await em.save(messageError0);
     }

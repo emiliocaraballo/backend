@@ -8,6 +8,7 @@ import { auth } from 'src/middleware/auth';
 import { UserPasswordHistory } from 'src/database/entity/userPasswordHistory';
 import { general } from 'src/config/general';
 import { mailer } from 'src/config/mail';
+import { Profile } from 'src/database/entity/profile';
 
 class UserRepository{
 
@@ -213,9 +214,24 @@ class UserRepository{
 
     public create=async (user:IUser,data:ITokenActivePass): Promise<IQueryResponse> => {
 
+
+        var QueryProfile=getRepository(Profile).findOne({select:["sequence"],where:{sequence:user.profiles_sequence}});
+        var [errorResponseProfile, responseProfile] = await to(QueryProfile);
+
+        
+        if (errorResponseProfile || responseProfile) {
+            return {
+                statusCode:404,
+                message:'PROFILE_NOT_FOUND'
+            }
+        }
+     
+
         var Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{email:user.mail.toLocaleLowerCase()}});
-        var [errorResponse, response] = await to(Query);
-        if (errorResponse || !response) {
+        [errorResponse, response] = await to(Query);
+
+        
+        if (errorResponse || response) {
             return {
                 statusCode:404,
                 message:'EMAIL_EXISTS'
@@ -224,11 +240,11 @@ class UserRepository{
         
          Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{identification:user.identification.toLocaleLowerCase()}});
          [errorResponse, response] = await to(Query);
-        if (errorResponse || !response) {
-            return {
-                statusCode:404,
-                message:'IDENTIFICATION_EXISTS'
-            }
+        if (errorResponse || response) {
+            // return {
+            //     statusCode:404,
+            //     message:'IDENTIFICATION_EXISTS'
+            // }
         }
 
 
@@ -244,7 +260,9 @@ class UserRepository{
                 status:user.status,
                 userCreated:data.userId,
                 userUpdated:data.userId,
-                password:await general.encryptOne(user.password)
+                password:await general.encryptOne(user.password),
+                //profileSequence:,
+                role:1
             }
          );
          [errorResponse, response] = await to(Query);
