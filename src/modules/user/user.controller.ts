@@ -10,14 +10,10 @@ class UserController {
         const [error, result] = await to(
          userRepository.validateUser(req.body.username)
         );
-         
-        console.log(result);
-        
         // si la respuesta no es exitosa. 
         if (result.statusCode!=200) {
            return customError.Error(req,res,result.statusCode,result.message)
         }
-        
         // respuestado
         res.status(result.statusCode).json({
             success:true,
@@ -25,7 +21,6 @@ class UserController {
         });
     }
 
-    
     public login= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
         const [error, result] = await to(
          userRepository.login(req.body)
@@ -34,8 +29,6 @@ class UserController {
         if (result.statusCode!=200) {
            return customError.Error(req,res,result.statusCode,result.message)
         }
-        console.log(result);
-        
         // respuestado
         res.status(result.statusCode).json({
             token:result.token,
@@ -49,12 +42,9 @@ class UserController {
          userRepository.changePassword(req.body.username)
         ); 
         // si la respuesta no es exitosa. 
-        if (result.statusCode!=200 && result.statusCode!=201) {
+        if (result.statusCode!=201) {
            return customError.Error(req,res,result.statusCode,result.message)
-        }
-
-        console.log(result);
-        
+        }        
         // respuestado
         res.status(result.statusCode).json({
             success:true,
@@ -68,9 +58,9 @@ class UserController {
         const [error, result] = await to(
          userRepository.activePassword(req.body.password,req.body.users.data)
         ); 
-        console.log(result);
+       
         // si la respuesta no es exitosa. 
-        if (result.statusCode!=200 && result.statusCode!=201) {
+        if (result.statusCode!=201) {
            return customError.Error(req,res,result.statusCode,result.message)
         }
         
@@ -81,5 +71,27 @@ class UserController {
             message:result.message
         });    
     }
+
+    public create= async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+    
+       
+        const [error, result] = await to(
+         userRepository.create(req.body,req.body.users.data)
+        ); 
+       
+        // si la respuesta no es exitosa. 
+        if (result.statusCode!=201) {
+           return customError.Error(req,res,result.statusCode,result.message)
+        }
+        
+
+        // respuestado
+        res.status(result.statusCode).json({
+            success:true,
+            message:result.message
+        });    
+    }
+    
+    
 }
 export const userController = new UserController;

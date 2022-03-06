@@ -1,11 +1,15 @@
 export interface IUser {
     id?: string
-    names: string
+    sequence?: number
+    name: string
+    last_name: string
     username: string
     password: string
     mail: string
     identification: string
     phone: string
+    status: number
+    profiles_sequence: number
 }
 
 

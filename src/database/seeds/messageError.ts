@@ -69,6 +69,14 @@ export default class CreateMessage implements Seeder {
         messageError7.userCreated=1; 
         messageError7.status=1;
         await em.save(messageError7)
+     
+        messageError7.code="PROFILE_NOT_FOUND";
+        messageError7.description="El perfil no existe, por favor verifique la información.";
+        messageError7.title="Lo sentimos.";
+        messageError7.createdAt=Date();
+        messageError7.userCreated=1; 
+        messageError7.status=1;
+        await em.save(messageError7)
 
 
 

@@ -2,7 +2,7 @@ import { getRepository } from 'typeorm';
 import { to } from 'await-to-js';
 
 import { IQueryResponse, ITokenActivePass } from 'src/interfaces/repository'
-import { UserAdmin } from 'src/database/entity/userAdmin'
+import { User } from 'src/database/entity/user'
 import { IUser, IUserData } from "src/interfaces/user";
 import { auth } from 'src/middleware/auth';
 import { UserPasswordHistory } from 'src/database/entity/userPasswordHistory';
@@ -12,7 +12,7 @@ import { mailer } from 'src/config/mail';
 class UserRepository{
 
     public validateUser=async (user: string): Promise<IQueryResponse> => {
-        const Query=getRepository(UserAdmin).findOne({select:["email","identification","names","phone","id"],where:{email:user.toLocaleLowerCase()}});
+        const Query=getRepository(User).findOne({select:["email","identification","name","last_name","phone","id"],where:{email:user.toLocaleLowerCase()}});
         
         const [errorResponse, response] = await to(Query);
         if (!response) {
@@ -30,7 +30,7 @@ class UserRepository{
 
     public login=async (data: IUser): Promise<IQueryResponse> => {
 
-        const Query=getRepository(UserAdmin).findOne({select:["email","identification","names","phone","id","password","sequence"],where:{email:data.username.toLocaleLowerCase()}});
+        const Query=getRepository(User).findOne({select:["email","identification","name","last_name","phone","id","password","sequence"],where:{email:data.username.toLocaleLowerCase()}});
       
 
         const [errorResponse, response] = await to(Query);
@@ -58,7 +58,8 @@ class UserRepository{
        const user={
         id:response.id,
         sequence:response.sequence,
-        names:response.names,
+        name:response.name,
+        last_name:response.last_name,
         phone:response.phone,
         identification:response.identification,
         email:response.email,
@@ -74,7 +75,7 @@ class UserRepository{
 
        
         
-        const Query=getRepository(UserAdmin).findOne({select:["email","names","id","sequence"],where:{email:user.toLocaleLowerCase()}});
+        const Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence"],where:{email:user.toLocaleLowerCase()}});
         const [errorResponse, response] = await to(Query);
        
         if (!response) {
@@ -89,8 +90,8 @@ class UserRepository{
       
 
         const QueryUserPasswordHistory=getRepository(UserPasswordHistory).createQueryBuilder("userPasswordHistory")
-        .innerJoin("users_admins","userAdmin","userPasswordHistory.user_admin_sequence=userAdmin.sequence")
-        .where("userAdmin.sequence=:sequence",{sequence:sequence})
+        .innerJoin("users_admins","User","userPasswordHistory.user_admin_sequence=User.sequence")
+        .where("User.sequence=:sequence",{sequence:sequence})
         .limit(1)
         .orderBy("userPasswordHistory.createdAt","DESC")
         .getMany();
@@ -129,7 +130,7 @@ class UserRepository{
         const token=await auth.generateToken(data,60);
          
           // se envia al correo.
-         mailer.mainChangePassword(response.names,token);
+         mailer.mainChangePassword(response.name,token);
         return {
             statusCode:201,
             message:"Su solicitud ha sido exitosa"
@@ -140,7 +141,7 @@ class UserRepository{
 
         const UserPasswordHistorySeq=data.sequence;
 
-        const Query=getRepository(UserAdmin).findOne({select:["email","names","id","sequence","password"],where:{sequence:data.userId}});
+        const Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{sequence:data.userId}});
         const [errorResponse, response] = await to(Query);
         if (!response) {
             return {
@@ -152,7 +153,7 @@ class UserRepository{
         const userId=response.sequence;
 
         const QueryUserPasswordHistory=getRepository(UserPasswordHistory).createQueryBuilder("userPasswordHistory")
-        .innerJoin("users_admins","userAdmin","userPasswordHistory.user_admin_sequence=userAdmin.sequence")
+        .innerJoin("users_admins","User","userPasswordHistory.user_admin_sequence=User.sequence")
         .where("userPasswordHistory.sequence=:sequence",{sequence:UserPasswordHistorySeq})
         .limit(1)
         .getMany();
@@ -191,7 +192,7 @@ class UserRepository{
         }
 
         // se cambia la contraseña en el usuario
-        const isUpdateUser=await getRepository(UserAdmin).update(userId,{
+        const isUpdateUser=await getRepository(User).update(userId,{
             password:passwordNew,
             updatedAt:general.dateNow()
         });
@@ -210,13 +211,23 @@ class UserRepository{
         }
     }
 
+    public create=async (user:IUser,data:ITokenActivePass): Promise<IQueryResponse> => {
+
+       
+    
+        return {
+            statusCode:201,
+            message:"EL usuario ha sido creado con exito."
+        }
+    }
+
 
     
     // general una nueva solicitd para cambio de contraseña
-    private createPasswordHistory=async(user:UserAdmin): Promise<boolean | number | undefined> =>{
+    private createPasswordHistory=async(user:User): Promise<boolean | number | undefined> =>{
          
         const userPasswordHistory=new UserPasswordHistory();
-        userPasswordHistory.userAdminSequence=user;
+        userPasswordHistory.UserSequence=user;
         userPasswordHistory.createdAt=general.dateNow();
         userPasswordHistory.updatedAt=general.dateNow();
         userPasswordHistory.userCreated=user.sequence;

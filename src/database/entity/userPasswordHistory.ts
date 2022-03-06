@@ -1,5 +1,5 @@
 import {Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne} from 'typeorm'
-import { UserAdmin } from 'src/database/entity/userAdmin';
+import { User } from 'src/database/entity/user';
 import { general } from 'src/config/general';
 @Entity({name:'users_password_historys'})
 export class UserPasswordHistory {
@@ -21,7 +21,7 @@ export class UserPasswordHistory {
     userCreated: number;
     @Column({name:'user_updated',type:'int', nullable: true})
     userUpdated: number;
-    @ManyToOne(() => UserAdmin, userAdmin => userAdmin.sequence)
+    @ManyToOne(() => User, User => User.sequence)
     @JoinColumn({name:'user_admin_sequence'})
-    userAdminSequence: UserAdmin;
+    UserSequence: User;
 }

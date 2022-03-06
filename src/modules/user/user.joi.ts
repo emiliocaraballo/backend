@@ -22,5 +22,17 @@ export const LoginTwoJoi=Joi.object({
 export const ActivePassJoi=Joi.object({
     username:username,
     password:Joi.string().required(),
-    users:Joi.object()
+    users:Joi.object().required()
+});
+
+export const CreateUserJoi=Joi.object({
+    name:Joi.string().required(),
+    last_name:Joi.string().required(),
+    phone:Joi.string().required(),
+    identification:Joi.string().required(),
+    status:Joi.number().required(),
+    profiles_sequence:Joi.number().required(),
+    mail:username,
+    password:Joi.string().required(),
+    users:Joi.object().required()
 });

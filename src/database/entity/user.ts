@@ -1,15 +1,17 @@
 import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm'
 import { Profile } from 'src/database/entity/profile';
 
-@Entity({name:'users_admins'})
-export class  UserAdmin {
+@Entity({name:'users'})
+export class  User {
     @Column({type:'uuid'})
     id: string;
     @PrimaryGeneratedColumn()
     sequence: number;
 
     @Column({type:"varchar"})
-    names: string;
+    name: string;
+    @Column({type:"varchar"})
+    last_name: string;
     @Column({type:"varchar"})
     phone: string;
     @Column({type:"varchar"})

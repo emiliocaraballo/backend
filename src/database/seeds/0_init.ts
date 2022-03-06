@@ -1,7 +1,7 @@
 import { Connection } from 'typeorm';
 import { Factory, Seeder } from 'typeorm-seeding';
 
- import { UserAdmin } from 'src/database/entity/userAdmin';
+ import { User } from 'src/database/entity/user';
  import  { Profile } from  'src/database/entity/profile'
  import  { MessageError } from  'src/database/entity/messageErrors'
 
@@ -24,8 +24,9 @@ export default class CreateUser implements Seeder {
 
         const profileRepository=await connection.getRepository(Profile).findOne({sequence:1});
         
-        const user = new UserAdmin();
-        user.names="Emilio Fernando Caraballo Dueñas";
+        const user = new User();
+        user.name="Emilio Fernando";
+        user.last_name="Caraballo Dueñas";
         user.phone="3042334893";
         user.email="emiliocaraballo9810@gmail.com";
         user.role=1;

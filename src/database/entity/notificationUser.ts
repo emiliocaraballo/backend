@@ -1,5 +1,5 @@
 import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm'
-import { UserAdmin } from 'src/database/entity/userAdmin';
+import { User } from 'src/database/entity/user';
 import { Notification } from 'src/database/entity/notification';
 @Entity({name:'notifications_users'})
 export class NotificationUser {
@@ -20,7 +20,7 @@ export class NotificationUser {
     @ManyToOne(() => Notification, notification => notification.sequence)
     @JoinColumn({name:'notifications_sequence'})
     notificationsSequence: Notification;
-    @ManyToOne(() => UserAdmin, userAdmin => userAdmin.sequence)
+    @ManyToOne(() => User, User => User.sequence)
     @JoinColumn({name:'users_admins_sequence'})
-    usersAdminsSequence: UserAdmin;
+    usersAdminsSequence: User;
 }

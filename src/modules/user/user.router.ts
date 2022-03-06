@@ -4,7 +4,7 @@ const router: Router = Router();
 import { userController } from 'src/modules/user/user.controller';
 
 // validaciones
-import { ValideUserJoi,LoginJoi,ActivePassJoi } from 'src/modules/user/user.joi';
+import { ValideUserJoi,LoginJoi,ActivePassJoi,CreateUserJoi } from 'src/modules/user/user.joi';
 import {createValidator} from 'express-joi-validation';
 import { auth } from 'src/middleware/auth';
 
@@ -17,4 +17,5 @@ router.post('/validate',[validator.body(ValideUserJoi)],[userController.validate
 router.post('/login',[validator.body(LoginJoi)],[userController.login]);
 router.post('/change-password',[validator.body(ValideUserJoi)],[userController.changePassword]);
 router.post('/active-password',[auth.validateTokenRoute,validator.body(ActivePassJoi)],[userController.activePassword]);
+router.post('/create',[auth.validateTokenRoute,validator.body(CreateUserJoi)],[userController.create]);
 export default router;

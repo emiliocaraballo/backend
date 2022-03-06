@@ -208,9 +208,9 @@ export class init1643174315782 implements MigrationInterface {
             await queryRunner.query("ALTER TABLE menus_has_profiles ADD CONSTRAINT menus_sequence_profiles_sequence UNIQUE (menus_sequence,profiles_sequence);");
 
 
-             // users_admins
+             // users
              await queryRunner.createTable(new Table({
-                name: "users_admins",
+                name: "users",
                 columns: [
                     {
                         name: 'id',
@@ -226,7 +226,11 @@ export class init1643174315782 implements MigrationInterface {
                         isGenerated:true
                     },
                     {
-                        name: "names",
+                        name: "name",
+                        type: "varchar"
+                    },
+                    {
+                        name: "last_name",
                         type: "varchar"
                     },
                     {
@@ -280,7 +284,7 @@ export class init1643174315782 implements MigrationInterface {
                 ]
             }), true)
             
-            await queryRunner.createForeignKey("users_admins", new TableForeignKey({
+            await queryRunner.createForeignKey("users", new TableForeignKey({
                 columnNames: ["profiles_sequence"],
                 referencedColumnNames: ["sequence"],
                 referencedTableName: "profiles",
@@ -306,7 +310,7 @@ export class init1643174315782 implements MigrationInterface {
                         isGenerated:true
                     },
                     {
-                        name: "user_admins_sequence",
+                        name: "user_sequence",
                         type: "int",
                         isUnique:true
                     },
@@ -356,13 +360,13 @@ export class init1643174315782 implements MigrationInterface {
 
 
             await queryRunner.createForeignKey("users_authentications", new TableForeignKey({
-                columnNames: ["user_admins_sequence"],
+                columnNames: ["user_sequence"],
                 referencedColumnNames: ["sequence"],
-                referencedTableName: "users_admins",
+                referencedTableName: "users",
                 onDelete: "CASCADE"
             }));
 
-            await queryRunner.query("ALTER TABLE users_authentications ADD CONSTRAINT code_type_user_admins_sequence UNIQUE (code_type,user_admins_sequence)");
+            await queryRunner.query("ALTER TABLE users_authentications ADD CONSTRAINT code_type_user_sequence UNIQUE (code_type,user_sequence)");
             //notifications
             await queryRunner.createTable(new Table({
                 name: "notifications",
@@ -445,7 +449,7 @@ export class init1643174315782 implements MigrationInterface {
                         type: "int"
                     },
                     {
-                        name: "users_admins_sequence",
+                        name: "users_sequence",
                         type: "int"
                     },
                     {
@@ -473,9 +477,9 @@ export class init1643174315782 implements MigrationInterface {
 
 
             await queryRunner.createForeignKey("notifications_users", new TableForeignKey({
-                columnNames: ["users_admins_sequence"],
+                columnNames: ["users_sequence"],
                 referencedColumnNames: ["sequence"],
-                referencedTableName: "users_admins",
+                referencedTableName: "users",
                 onDelete: "CASCADE"
             }));
 
@@ -605,7 +609,7 @@ export class init1643174315782 implements MigrationInterface {
             await queryRunner.createForeignKey("users_password_historys", new TableForeignKey({
                 columnNames: ["user_admin_sequence"],
                 referencedColumnNames: ["sequence"],
-                referencedTableName: "users_admins",
+                referencedTableName: "users",
                 onDelete: "CASCADE"
             }));
 
@@ -619,7 +623,7 @@ export class init1643174315782 implements MigrationInterface {
         await queryRunner.dropTable("notifications_users");
         await queryRunner.dropTable("notifications");
         await queryRunner.dropTable("users_authentications");
-        await queryRunner.dropTable("users_admins");
+        await queryRunner.dropTable("users");
         await queryRunner.dropTable("menus_has_profiles");
         await queryRunner.dropTable("profiles");
         await queryRunner.dropTable("menus");
