@@ -228,7 +228,7 @@ class UserRepository{
      
 
         var Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{email:user.mail.toLocaleLowerCase()}});
-        [errorResponse, response] = await to(Query);
+      const  [errorResponse, response] = await to(Query);
 
         
         if (errorResponse || response) {
@@ -239,8 +239,8 @@ class UserRepository{
         }
         
          Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{identification:user.identification.toLocaleLowerCase()}});
-         [errorResponse, response] = await to(Query);
-        if (errorResponse || response) {
+         const  [errorResponse2, response2] = await to(Query);
+        if (errorResponse2 || response2) {
             // return {
             //     statusCode:404,
             //     message:'IDENTIFICATION_EXISTS'
@@ -265,7 +265,7 @@ class UserRepository{
                 role:1
             }
          );
-         [errorResponse, response] = await to(Query);
+         const  [errorResponse3, response3] = await to(Query);
          if (errorResponse || !response) {
             return {
                 statusCode:404,
