@@ -62,7 +62,7 @@ app.use(morgan('common', {
 
 //app.use(morgan('dev'));
 // for parsing application/json
-app.use(express.json({limit:'2mb'}));
+app.use(express.json({limit:'5mb'}));
 // for parsing application/xwww-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
 

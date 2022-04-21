@@ -38,7 +38,7 @@ class Auth{
             
             if(token!="undefined"){
                 return jwt.verify(token, process.env.JWT_SECRET  + '', async (err) => {
-                    if (err) return customError.Error(req,res,401,"AUTHORIZATION_INVALID");
+                    if (err) return customError.Error(req,res,"401","AUTHORIZATION_INVALID");
                     const datatoken = jwt_decode(token);
                     req.body.users=datatoken;
                     next();
@@ -47,7 +47,7 @@ class Auth{
         } catch (error) {
             
         }
-      return customError.Error(req,res,401,"AUTHORIZATION_FOUND")
+      return customError.Error(req,res,"401","AUTHORIZATION_FOUND")
     }
 }
 export const auth = new Auth;

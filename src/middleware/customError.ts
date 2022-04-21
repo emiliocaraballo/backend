@@ -18,7 +18,7 @@ class CustomError{
         } 
         
         res.status(Number(status) || 500).json({
-            statusCode:status,
+            statusCode:Number(status),
             title:title,
             message:description,
             timestamp: new Date().toISOString(),

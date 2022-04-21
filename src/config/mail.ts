@@ -7,9 +7,9 @@ class Mailer{
     private secure: boolean=true;
     private requireTLS: boolean=false;
     private logger: boolean=false;
-    private username: string="emilioflow2016@gmail.com";
-    private password: string="13579EMi";
-    private from:string="emiliocaraballo9810@gmail.com";
+    private username: string="";
+    private password: string="";
+    private from:string="";
     
     public main=async(name:string="Smartinfo",subject:string="Hello from smartinfo",html:string="<strong>Hello world?</strong>",to:string | any[]="emiliocaraballo9810@gmail.com",replay:string | any[]="emilioflow2016@gmail.com")=>{
       try {
