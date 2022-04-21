@@ -5,7 +5,7 @@ import { MessageError } from 'src/database/entity/messageErrors';
 import { to } from 'await-to-js';
 
 class CustomError{
-    public Error=async(req:Request,res:Response,status:number,code:string,data?:any)=>{
+    public Error=async(req:Request,res:Response,status:string,code:string,data?:any)=>{
         const Query=getRepository(MessageError).findOne({select:["title","description"],where:{code:code,status:1}});
         const [errorResponse, response] = await to(Query);
 
@@ -17,7 +17,7 @@ class CustomError{
             description=response.description;
         } 
         
-        res.status(status || 500).json({
+        res.status(Number(status) || 500).json({
             statusCode:status,
             title:title,
             message:description,
@@ -29,3 +29,14 @@ class CustomError{
     }
 }
 export const customError = new CustomError;
+
+export class Apirror extends Error {
+    constructor (description, statusCode) {
+    super(description)
+   
+    Object.setPrototypeOf(this, new.target.prototype)
+      this.name = statusCode
+      Error.captureStackTrace(this);
+    }
+}
+ 

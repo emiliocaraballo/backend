@@ -11,11 +11,11 @@ class UserController {
          userRepository.validateUser(req.body.username)
         );
         // si la respuesta no es exitosa. 
-        if (result.statusCode!=200) {
-           return customError.Error(req,res,result.statusCode,result.message)
+        if (error) {
+           return customError.Error(req,res,error.name,error.message)
         }
         // respuestado
-        res.status(result.statusCode).json({
+        res.status(200).json({
             success:true,
             message:""
         });
@@ -26,11 +26,11 @@ class UserController {
          userRepository.login(req.body)
         )
         // si la respuesta no es exitosa. 
-        if (result.statusCode!=200) {
-           return customError.Error(req,res,result.statusCode,result.message)
-        }
+         if (error) {
+            return customError.Error(req,res,error.name,error.message)
+         }
         // respuestado
-        res.status(result.statusCode).json({
+        res.status(200).json({
             token:result.token,
             data:result.data
         });
@@ -42,11 +42,11 @@ class UserController {
          userRepository.changePassword(req.body.username)
         ); 
         // si la respuesta no es exitosa. 
-        if (result.statusCode!=201) {
-           return customError.Error(req,res,result.statusCode,result.message)
-        }        
+        if (error) {
+            return customError.Error(req,res,error.name,error.message)
+        }     
         // respuestado
-        res.status(result.statusCode).json({
+        res.status(201).json({
             success:true,
             message:result.message
         });    
@@ -60,13 +60,12 @@ class UserController {
         ); 
        
         // si la respuesta no es exitosa. 
-        if (result.statusCode!=201) {
-           return customError.Error(req,res,result.statusCode,result.message)
+        if (error) {
+            return customError.Error(req,res,error.name,error.message)
         }
-        
 
         // respuestado
-        res.status(result.statusCode).json({
+        res.status(201).json({
             success:true,
             message:result.message
         });    
@@ -80,13 +79,13 @@ class UserController {
         ); 
        
         // si la respuesta no es exitosa. 
-        if (result.statusCode!=201) {
-           return customError.Error(req,res,result.statusCode,result.message)
-        }
+        if (error) {
+            return customError.Error(req,res,error.name,error.message)
+         }
         
 
         // respuestado
-        res.status(result.statusCode).json({
+        res.status(201).json({
             success:true,
             message:result.message
         });    
@@ -100,13 +99,13 @@ class UserController {
         ); 
        
         // si la respuesta no es exitosa. 
-        if (result.statusCode!=201) {
-           return customError.Error(req,res,result.statusCode,result.message)
+        if (error) {
+            return customError.Error(req,res,error.name,error.message)
         }
         
 
         // respuestado
-        res.status(result.statusCode).json({
+        res.status(201).json({
             success:true,
             message:result.message
         });    

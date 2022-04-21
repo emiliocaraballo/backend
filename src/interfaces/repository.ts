@@ -1,5 +1,5 @@
 export interface IQueryResponse{
-    statusCode: number
+    statusCode?: number
     data?: any
     token?:string
     message?: string

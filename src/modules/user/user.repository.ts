@@ -9,53 +9,35 @@ import { UserPasswordHistory } from 'src/database/entity/userPasswordHistory';
 import { general } from 'src/config/general';
 import { mailer } from 'src/config/mail';
 import { Profile } from 'src/database/entity/profile';
+import { Apirror } from 'src/middleware/customError';
 
 class UserRepository{
 
     public validateUser=async (user: string): Promise<IQueryResponse> => {
         const Query=getRepository(User).findOne({select:["email","identification","name","last_name","phone","id"],where:{email:user.toLocaleLowerCase()}});
-        
         const [errorResponse, response] = await to(Query);
         if (!response) {
-            return {
-                statusCode:404,
-                message:'USER_NOT_FOUND'
-            }
+            throw new Apirror("USER_NOT_FOUND",404);
         }
-
         return {
-            statusCode:200,
             data:response
         }
     }
 
     public login=async (data: IUser): Promise<IQueryResponse> => {
-
         const Query=getRepository(User).findOne({select:["email","identification","name","last_name","phone","id","password","sequence"],where:{email:data.username.toLocaleLowerCase()}});
-      
-
         const [errorResponse, response] = await to(Query);
         if (!response) {
-            return {
-                statusCode:400,
-                message:'USER_PASSWORD_VERIFY'
-            }
+            throw new Apirror("USER_PASSWORD_VERIFY",400);
         }
-
         if(!await this.checkPassword(data.password,response.password)){
-            return {
-                statusCode:400,
-                message:'USER_PASSWORD_VERIFY'
-            }
+            throw new Apirror("USER_PASSWORD_VERIFY",400);
         }
-
         const userT:IUserData={
             id:response.id,
             sequence:response.sequence
         }
-
        const token=await auth.generateToken(userT);
-
        const user={
         id:response.id,
         sequence:response.sequence,
@@ -66,93 +48,61 @@ class UserRepository{
         email:response.email,
         }
         return {
-            statusCode:200,
             token:token,
             data:user
         }
     }
     
     public changePassword=async (user: string): Promise<IQueryResponse> => {
-
-       
-        
         const Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence"],where:{email:user.toLocaleLowerCase()}});
         const [errorResponse, response] = await to(Query);
-       
         if (!response) {
-            return {
-                statusCode:404,
-                message:'USER_NOT_FOUND'
-            }
+            throw new Apirror("USER_NOT_FOUND",404);
         }
         // el sequence se usuario
         const sequence=response.sequence;
-
-      
-
         const QueryUserPasswordHistory=getRepository(UserPasswordHistory).createQueryBuilder("userPasswordHistory")
         .innerJoin("users_admins","User","userPasswordHistory.user_admin_sequence=User.sequence")
         .where("User.sequence=:sequence",{sequence:sequence})
         .limit(1)
         .orderBy("userPasswordHistory.createdAt","DESC")
         .getMany();
-        
         const [errorPassword, responsePassword] = await to(QueryUserPasswordHistory);  
-        
-        
         if(responsePassword.length>0){
             // paso 1 ver si ya expiro y si el estado es 0
             var status:number=responsePassword[0].status;
             var createdAt:string=responsePassword[0].createdAt;
             var minute=general.diff_minute(general.dateNow(),general.dateFormat(createdAt));
             if(minute<=60 && status==0){
-                return {
-                    statusCode:400,
-                    message:'PENDING_REQUEST'
-                }
+                throw new Apirror("PENDING_REQUEST",400);
             }
         }
-
-       
-
         const result=await this.createPasswordHistory(response);
         if(!result){
             // no se pudo general la solicitud.
-            return {
-                statusCode:400,
-                message:'NOT_REQUEST'
-            }
+            throw new Apirror("NOT_REQUEST",400);
         }
-
         const data={
             sequence:result,
             userId:sequence
         }
         const token=await auth.generateToken(data,60);
-         
           // se envia al correo.
          mailer.mainChangePassword(response.name,token);
         return {
-            statusCode:201,
             message:"Su solicitud ha sido exitosa"
         }
     }
 
     public activePassword=async (password:string,data:ITokenActivePass): Promise<IQueryResponse> => {
-
         const UserPasswordHistorySeq=data.sequence;
-
         const Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{sequence:data.userId}});
         const [errorResponse, response] = await to(Query);
         if (!response) {
-            return {
-                statusCode:404,
-                message:'USER_NOT_FOUND'
-            }
+            throw new Apirror("USER_NOT_FOUND",404);
         }
         // el sequence se usuario
         const userId=response.sequence;
-
         const QueryUserPasswordHistory=getRepository(UserPasswordHistory).createQueryBuilder("userPasswordHistory")
         .innerJoin("users_admins","User","userPasswordHistory.user_admin_sequence=User.sequence")
         .where("userPasswordHistory.sequence=:sequence",{sequence:UserPasswordHistorySeq})
@@ -161,23 +111,13 @@ class UserRepository{
         
         const [errorPassword, responsePassword] = await to(QueryUserPasswordHistory);   
         if(!responsePassword){
-            return {
-                statusCode:400,
-                message:'PENDING_REQUEST'
-            }
+            throw new Apirror("PENDING_REQUEST",400);
         }
-       
         if(responsePassword[0].status==1){
-            return {
-                statusCode:400,
-                message:'NOT_INVALID_REQUEST'
-            }
+            throw new Apirror("NOT_INVALID_REQUEST",400);
         }
-        
-
         var passwordOld= response.password;
         var passwordNew=await general.encryptOne(password) ;
-       
         const isUpdatePass=await getRepository(UserPasswordHistory).update(UserPasswordHistorySeq,{
             password_new:passwordNew,
             password_old:passwordOld,
@@ -186,10 +126,7 @@ class UserRepository{
         });
 
         if(isUpdatePass.affected==0){
-            return {
-                statusCode:400,
-                message:'NOT_REQUEST'
-            }
+            throw new Apirror("NOT_REQUEST",400);
         }
 
         // se cambia la contraseña en el usuario
@@ -199,56 +136,36 @@ class UserRepository{
         });
         
         if(isUpdateUser.affected==0){
-            return {
-                statusCode:400,
-                message:'NOT_REQUEST'
-            }
+            throw new Apirror("NOT_REQUEST",400);
         }  
         
         
         return {
-            statusCode:201,
             message:"Su contraseña ha sido cambiada de forma exitosa."
         }
     }
 
     public create=async (user:IUser,data:ITokenActivePass): Promise<IQueryResponse> => {
-
-
         var QueryProfile=getRepository(Profile).findOne({select:["sequence"],where:{sequence:user.profiles_sequence}});
         var [errorResponseProfile, responseProfile] = await to(QueryProfile);
-
-        
         if (errorResponseProfile || responseProfile) {
-            return {
-                statusCode:404,
-                message:'PROFILE_NOT_FOUND'
-            }
+            throw new Apirror("PROFILE_NOT_FOUND",404);
         }
      
-
         var Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{email:user.mail.toLocaleLowerCase()}});
-      const  [errorResponse, response] = await to(Query);
-
-        
+        const  [errorResponse, response] = await to(Query);
         if (errorResponse || response) {
-            return {
-                statusCode:404,
-                message:'EMAIL_EXISTS'
-            }
+            throw new Apirror("EMAIL_EXISTS",404);
         }
-        
-         Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{identification:user.identification.toLocaleLowerCase()}});
-         const  [errorResponse2, response2] = await to(Query);
+        Query=getRepository(User).findOne({select:["email","name","last_name","id","sequence","password"],where:{identification:user.identification.toLocaleLowerCase()}});
+        const  [errorResponse2, response2] = await to(Query);
         if (errorResponse2 || response2) {
             // return {
             //     statusCode:404,
             //     message:'IDENTIFICATION_EXISTS'
             // }
         }
-
-
-         Query=getRepository(User).save(
+        Query=getRepository(User).save(
             {
                 createdAt:general.dateNow(),
                 updatedAt:general.dateNow(),
@@ -266,27 +183,16 @@ class UserRepository{
             }
          );
          const  [errorResponse3, response3] = await to(Query);
-         if (errorResponse || !response) {
-            return {
-                statusCode:404,
-                message:'NOT_REQUEST'
-            }
-        }
-
-       
-    
-        return {
-            statusCode:201,
+         if (errorResponse3 || !response3) {
+            throw new Apirror("NOT_REQUEST",404);
+         }
+         return {
             message:"EL usuario ha sido creado con exito."
-        }
+         }
     }
 
     public update=async (user:IUser,data:ITokenActivePass): Promise<IQueryResponse> => {
-
-       
-    
         return {
-            statusCode:201,
             message:"EL usuario ha sido creado con exito."
         }
     }
@@ -301,7 +207,6 @@ class UserRepository{
         userPasswordHistory.createdAt=general.dateNow();
         userPasswordHistory.updatedAt=general.dateNow();
         userPasswordHistory.userCreated=user.sequence;
-        userPasswordHistory.userUpdated=user.sequence;
         userPasswordHistory.userUpdated=user.sequence;
         userPasswordHistory.status=0;
        
